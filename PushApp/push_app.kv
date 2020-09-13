@@ -1,0 +1,99 @@
+WindowManager:
+    MainWindow:
+    CountScreen:
+    NiceTryScreen:
+    FinalWindow:
+
+<MainWindow>:
+    name:"Main"
+    GridLayout:
+        cols:1
+
+        GridLayout:
+            cols:1
+
+            Label:
+                pos_hint: {"top":1}
+                size_hint: 1,0.5
+                text: "ENTER THE NUMBER OF PUSH UPS:"
+                font_size:65
+
+            TextInput:
+                id: input_id
+                multiline:False
+                font_size:350
+                padding: [0, (self.height-self.line_height)/2]
+                input_filter: 'int'
+
+            GridLayout:
+                cols:2
+
+                Button:
+                    id:"btn_go"
+                    text:"Go"
+                    font_size:260
+                    on_press:
+                        if input_id.text=="":\
+                        app.root.current="NiceTry"
+                        else:app.PUSH_UP_COUNT = int(input_id.text) #ASSING USER INPUT    
+                    on_release:
+                        if app.PUSH_UP_COUNT<=0:app.root.current="NiceTry"
+                        else:app.root.current="CountingWindow"
+                        root.manager.get_screen('CountingWindow').ids.lbl_1.text=input_id.text
+
+                Button:
+                    text:"Enough!"
+                    font_size:145
+                    on_press:
+                        app.stop()
+
+
+
+
+<CountScreen>:
+    name:"CountingWindow"
+    GridLayout:
+        cols:1
+    Label:
+        id:lbl_1
+        font_size:400
+        text:""
+
+    Button:
+        id:"btn_1"
+        background_color:(0,0,0,.1)
+        on_press:
+            root.BUTTON_DOWN()
+        on_release:
+            root.BUTTON_UP()
+            if root.PUSH_UP():lbl_1.text=str(int(lbl_1.text)-1) #DECREMENTS 1 FROM USER INPUT
+            if lbl_1.text == '0':app.root.current="FinalScreen" #GO TO FINAL WINDOW WHEN FINISHED
+
+<NiceTryScreen>:
+    name:"NiceTry"
+    Label:
+        id:label_3
+        text:"NICE TRY"
+        font_size:150
+        pos_hint:{"top":1}
+
+    Button:
+        background_color:(0,0,0,0)
+        on_release:
+            app.root.current="Main"
+            root.manager.transition.direction="up"
+
+<FinalWindow>:
+    name:"FinalScreen"
+    on_enter:root.PlaySound()
+    Label:
+        id:label_2
+        text:"WELL DONE"
+        font_size:150
+        pos_hint:{"top":1}
+
+    Button:
+        background_color:(0,0,0,0)
+        on_release:
+            app.root.current="Main"
+            root.manager.transition.direction="down"
